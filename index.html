@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Task Manager</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background: #f7f7f7; }
+        h1 { color: #333; }
+        form { margin-bottom: 20px; }
+        input, textarea { padding: 8px; margin: 5px 0; width: 100%; box-sizing: border-box; }
+        button { padding: 8px 16px; margin-top: 8px; }
+        ul { list-style: none; padding: 0; }
+        li { background: #fff; margin-bottom: 10px; padding: 15px; border-radius: 5px; box-shadow: 0 1px 3px #ccc; }
+        .desc { color: #666; margin-top: 5px; }
+        .delete-btn { float: right; background: #e74c3c; color: #fff; border: none; border-radius: 3px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Task Manager</h1>
+    <form id="taskForm">
+        <input type="text" id="taskTitle" placeholder="Task Title" required>
+        <textarea id="taskDesc" placeholder="Short Description" rows="2" required></textarea>
+        <button type="submit">Add Task</button>
+    </form>
+    <ul id="taskList"></ul>
+
+    <script>
+        const taskForm = document.getElementById('taskForm');
+        const taskList = document.getElementById('taskList');
+        const taskTitle = document.getElementById('taskTitle');
+        const taskDesc = document.getElementById('taskDesc');
+
+        function createTaskElement(title, desc) {
+            const li = document.createElement('li');
+            const delBtn = document.createElement('button');
+            delBtn.textContent = 'Delete';
+            delBtn.className = 'delete-btn';
+            delBtn.onclick = () => li.remove();
+
+            const titleElem = document.createElement('strong');
+            titleElem.textContent = title;
+
+            const descElem = document.createElement('div');
+            descElem.className = 'desc';
+            descElem.textContent = desc;
+
+            li.appendChild(delBtn);
+            li.appendChild(titleElem);
+            li.appendChild(descElem);
+            return li;
+        }
+
+        taskForm.onsubmit = function(e) {
+            e.preventDefault();
+            const title = taskTitle.value.trim();
+            const desc = taskDesc.value.trim();
+            if (title && desc) {
+                const taskElem = createTaskElement(title, desc);
+                taskList.appendChild(taskElem);
+                taskForm.reset();
+            }
+        };
+    </script>
+</body>
+</html>

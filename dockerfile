@@ -1,14 +1,25 @@
-# Use Python Alpine image
-FROM python:3.12-alpine
+# # Use Python Alpine image
+# FROM python:3.12-alpine
 
-# Set working directory
+# # Set working directory
+# WORKDIR /app
+
+# # Copy entire folder into the container
+# COPY . /app/
+
+# # Expose the HTTP port
+# EXPOSE 8000
+
+# # Start a simple HTTP server
+# CMD ["python", "-m", "http.server", "8000", "--bind", "0.0.0.0"]
+
+FROM python:3.11-slim
+
 WORKDIR /app
 
-# Copy entire folder into the container
-COPY . /app/
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Expose the HTTP port
-EXPOSE 8000
+COPY backend/ /app/
 
-# Start a simple HTTP server
-CMD ["python", "-m", "http.server", "8000", "--bind", "0.0.0.0"]
+CMD ["python", "app.py"]

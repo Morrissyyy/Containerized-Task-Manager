@@ -10,9 +10,9 @@
         input, textarea { padding: 8px; margin: 5px 0; width: 100%; box-sizing: border-box; }
         button { padding: 8px 16px; margin-top: 8px; }
         ul { list-style: none; padding: 0; }
-        li { background: #fff; margin-bottom: 10px; padding: 15px; border-radius: 5px; box-shadow: 0 1px 3px #ccc; }
+        li { background: #fff; margin-bottom: 10px; padding: 15px; border-radius: 5px; box-shadow: 0 1px 3px #ccc; position: relative; }
         .desc { color: #666; margin-top: 5px; }
-        .delete-btn { float: right; background: #e74c3c; color: #fff; border: none; border-radius: 3px; cursor: pointer; }
+        .delete-btn { position: absolute; right: 15px; top: 15px; background: #e74c3c; color: #fff; border: none; border-radius: 3px; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -30,19 +30,25 @@
         const taskTitle = document.getElementById('taskTitle');
         const taskDesc = document.getElementById('taskDesc');
 
-        function createTaskElement(title, desc) {
+        const API_URL = "http://localhost:5000/tasks"; // Flask backend
+
+        // Create task element in DOM
+        function createTaskElement(task) {
             const li = document.createElement('li');
             const delBtn = document.createElement('button');
             delBtn.textContent = 'Delete';
             delBtn.className = 'delete-btn';
-            delBtn.onclick = () => li.remove();
+            delBtn.onclick = async () => {
+                await fetch(`${API_URL}/${task.id}`, { method: "DELETE" });
+                li.remove();
+            };
 
             const titleElem = document.createElement('strong');
-            titleElem.textContent = title;
+            titleElem.textContent = task.title;
 
             const descElem = document.createElement('div');
             descElem.className = 'desc';
-            descElem.textContent = desc;
+            descElem.textContent = task.description;
 
             li.appendChild(delBtn);
             li.appendChild(titleElem);
@@ -50,16 +56,35 @@
             return li;
         }
 
-        taskForm.onsubmit = function(e) {
+        // Load all tasks from backend
+        async function loadTasks() {
+            taskList.innerHTML = "";
+            const res = await fetch(API_URL);
+            const tasks = await res.json();
+            tasks.forEach(task => {
+                taskList.appendChild(createTaskElement(task));
+            });
+        }
+
+        // Handle form submit
+        taskForm.onsubmit = async function(e) {
             e.preventDefault();
             const title = taskTitle.value.trim();
             const desc = taskDesc.value.trim();
             if (title && desc) {
-                const taskElem = createTaskElement(title, desc);
-                taskList.appendChild(taskElem);
+                const res = await fetch(API_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ title, description: desc })
+                });
+                const newTask = await res.json();
+                taskList.appendChild(createTaskElement(newTask));
                 taskForm.reset();
             }
         };
+
+        // Load tasks on page load
+        loadTasks();
     </script>
 </body>
 </html>

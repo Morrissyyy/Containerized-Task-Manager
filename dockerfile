@@ -14,4 +14,3 @@ EXPOSE 8000
 
 # Start a simple HTTP server
 CMD ["python", "-m", "http.server", "8000"]
-

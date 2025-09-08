@@ -1,0 +1,40 @@
+# Alle requirements voor het project, requirements met # ervoor zijn voldaan.
+
+Functionele eisen:
+1. Takenbeheer: 
+- Een gebruiker moet taken kunnen toevoegen, bewerken en verwijderen.
+- Taken moeten een titel en een beschrijving hebben.
+- Taken worden weergeven in een lijst.
+
+2. Database: 
+- De taken worden opgeslagen in een database.
+- De database draait in een aparte container.
+
+3. Webinterface:
+- De applicatie moet een eenvoudige webinterface hebben (html, css of JavaScript).
+- De backend kan in Python(Flask) of C#(ASP.NET) worden gebouwd.
+
+4. Docker Setup:
+- Eén container voor de webapplicatie.
+- Eén container voor de database.
+- Containers communiceren via een Docker-network.
+- Gebruik een docker-compose.yml om de containers eenvoudig te starten.
+
+Technische eisen:
+1. Projectstructuur:
+- Map met de backend-code.
+- Map met de database-init scripts (SQL-bestanden).
+- Dockerfile voor de webapplicatie.
+- docker-compose.yml voor het opzetten van de containers.
+
+2. Database-init:
+- Database kolommen voor de tabel tasks heeft minimaal: 
+    - id (PRIMARY KEY, AUTO_INCREMENT)
+    - title (VARCHAR)
+    - description (TEXT)
+
+3. Documentatie:
+- README.md met daarin:
+    - Hoe de applicatie gestart kan worden met Docker.
+    - Welke containers er zijn en hun rollen.
+    - Hoe de database is ingericht.

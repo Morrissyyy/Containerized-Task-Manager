@@ -3,23 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <title>Task Manager</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 40px; background: #f7f7f7; }
-        h1 { color: #333; }
-        form { margin-bottom: 20px; }
-        input, textarea { padding: 8px; margin: 5px 0; width: 100%; box-sizing: border-box; }
-        button { padding: 8px 16px; margin-top: 8px; }
-        ul { list-style: none; padding: 0; }
-        li { background: #fff; margin-bottom: 10px; padding: 15px; border-radius: 5px; box-shadow: 0 1px 3px #ccc; }
-        .desc { color: #666; margin-top: 5px; }
-        .delete-btn { float: right; background: #e74c3c; color: #fff; border: none; border-radius: 3px; cursor: pointer; }
-    </style>
+     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <h1>Task Manager</h1>
+    <h1>Updated</h1>
     <form id="taskForm">
         <input type="text" id="taskTitle" placeholder="Task Title" required>
-        <textarea id="taskDesc" placeholder="Short Description" rows="2" required></textarea>
+        <textarea type="text" id="taskDesc" placeholder="Short Description" rows="2" required></textarea>
         <button type="submit">Add Task</button>
     </form>
     <ul id="taskList"></ul>
@@ -32,10 +22,15 @@
 
         function createTaskElement(title, desc) {
             const li = document.createElement('li');
+            const container = document.createElement('filler')
             const delBtn = document.createElement('button');
+            const EditBtn = document.createElement('button');
             delBtn.textContent = 'Delete';
             delBtn.className = 'delete-btn';
             delBtn.onclick = () => li.remove();
+            EditBtn.onclick = () => {window.location.href = 'edit-task.html?id=${taskId}s';};
+            EditBtn.textContent = 'Edit'
+            EditBtn.className = 'edit-btn'
 
             const titleElem = document.createElement('strong');
             titleElem.textContent = title;
@@ -44,9 +39,11 @@
             descElem.className = 'desc';
             descElem.textContent = desc;
 
-            li.appendChild(delBtn);
+            li.appendChild(container)
+            container.appendChild(delBtn);
             li.appendChild(titleElem);
             li.appendChild(descElem);
+            container.appendChild(EditBtn);
             return li;
         }
 

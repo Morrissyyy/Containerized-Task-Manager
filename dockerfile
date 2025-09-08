@@ -1,7 +1,5 @@
-# syntax=docker/dockerfile:1
-
 # Use Python Alpine image
-FROM python:3.12-alpine AS final
+FROM python:3.12-alpine
 
 # Set working directory
 WORKDIR /app
@@ -13,4 +11,4 @@ COPY . /app/
 EXPOSE 8000
 
 # Start a simple HTTP server
-CMD ["python", "-m", "http.server", "8000"]
+CMD ["python", "-m", "http.server", "8000", "--bind", "0.0.0.0"]

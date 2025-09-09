@@ -23,34 +23,105 @@
         const API_URL = "http://localhost:5000/tasks"; // Flask backend
 
         // Create task element in DOM
-        function createTaskElement(task) {
-            const li = document.createElement('li');
-            const container = document.createElement('filler')
-            const delBtn = document.createElement('button');
-            const EditBtn = document.createElement('button');
-            delBtn.textContent = 'Delete';
-            delBtn.className = 'delete-btn';
-            delBtn.onclick = async () => {
-                await fetch(`${API_URL}/${task.id}`, { method: "DELETE" });
-                li.remove();
-            };
-            EditBtn.onclick = () => {window.location.href = 'edit-task.html?id=${taskId}s';};
-            EditBtn.textContent = 'Edit'
-            EditBtn.className = 'edit-btn'
-            const titleElem = document.createElement('strong');
-            titleElem.textContent = task.title;
+function createTaskElement(task) {
+    const li = document.createElement('li');
+    const container = document.createElement('div');
 
-            const descElem = document.createElement('div');
-            descElem.className = 'desc';
-            descElem.textContent = task.description;
+    const titleElem = document.createElement('strong');
+    titleElem.textContent = task.title;
 
-            li.appendChild(container)
-            container.appendChild(delBtn);
-            li.appendChild(titleElem);
-            li.appendChild(descElem);
-            container.appendChild(EditBtn);
-            return li;
-        }
+    const descElem = document.createElement('div');
+    descElem.className = 'desc';
+    descElem.textContent = task.description;
+
+    // --- DELETE BUTTON ---
+    const delBtn = document.createElement('button');
+    delBtn.textContent = 'Delete';
+    delBtn.className = 'delete-btn';
+    delBtn.onclick = async () => {
+        await fetch(`${API_URL}/${task.id}`, { method: "DELETE" });
+        li.remove();
+    };
+
+    // --- EDIT BUTTON ---
+    const editBtn = document.createElement('button');
+    editBtn.textContent = 'Edit';
+    editBtn.className = 'edit-btn';
+
+    editBtn.onclick = () => {
+        // Convert text to input fields
+        const titleInput = document.createElement('input');
+        titleInput.value = titleElem.textContent;
+
+        const descInput = document.createElement('textarea');
+        descInput.value = descElem.textContent;
+
+        const saveBtn = document.createElement('button');
+        saveBtn.textContent = 'Save';
+        saveBtn.className = 'save-btn';
+
+        const cancelBtn = document.createElement('button');
+        cancelBtn.textContent = 'Cancel';
+        cancelBtn.className = 'cancel-btn';
+
+        // Replace elements
+        li.replaceChild(titleInput, titleElem);
+        li.replaceChild(descInput, descElem);
+        container.replaceChild(saveBtn, editBtn);
+        container.appendChild(cancelBtn);
+
+        // --- SAVE HANDLER ---
+        saveBtn.onclick = async () => {
+            try {
+                const newTitle = titleInput.value.trim();
+                const newDesc = descInput.value.trim();
+
+                if (!newTitle || !newDesc) return;
+
+                const res = await fetch(`${API_URL}/${task.id}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ title: newTitle, description: newDesc })
+                });
+
+                if (!res.ok) {
+                    throw new Error("Failed to update task");
+                }
+
+                const updatedTask = await res.json();
+
+                // Update DOM back to text
+                titleElem.textContent = updatedTask.title;
+                descElem.textContent = updatedTask.description;
+
+                li.replaceChild(titleElem, titleInput);
+                li.replaceChild(descElem, descInput);
+                container.replaceChild(editBtn, saveBtn);
+                cancelBtn.remove();
+            } catch (err) {
+                console.error("Save error:", err);
+                alert("Failed to save changes.");
+            }
+        };
+
+        // --- CANCEL HANDLER ---
+        cancelBtn.onclick = () => {
+            li.replaceChild(titleElem, titleInput);
+            li.replaceChild(descElem, descInput);
+            container.replaceChild(editBtn, saveBtn);
+            cancelBtn.remove();
+        };
+    };
+
+    container.appendChild(editBtn);
+    container.appendChild(delBtn);
+
+    li.appendChild(titleElem);
+    li.appendChild(descElem);
+    li.appendChild(container);
+
+    return li;
+}
 
         // Load all tasks from backend
         async function loadTasks() {
